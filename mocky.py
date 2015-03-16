@@ -19,6 +19,7 @@ def getClass(moduleName, className):
 def getAllMethodNames(class_):
     names = []
     for each in inspect.getmembers(class_, predicate=inspect.isfunction):
+        print(each)
         if not each[0].startswith("__"):
             names.append(each[0])
     return names
@@ -28,6 +29,9 @@ def getMethod(class_, methodName):
 
 def addMethodToClass(class_, method):
     class_.__dict__[method.__name__] = method
+
+def addMethodToMockedClass(class_, methodName, returnValue):
+    class_.__dict__[methodName] = Mock(return_value=returnValue)
 
 
 def isBoundMethod(method):
@@ -56,7 +60,7 @@ def allArgsHaveDefaults(method):
 
 
 def isOfPrimitiveType(variable):
-    primitives = (int, str, float, bool, complex, type(None))
+    primitives = (int, str, float, bool, complex, list, type(None))
 
     if isinstance(variable, primitives):
         return True
@@ -70,10 +74,14 @@ def getRandomStrOfLen(length):
 def createRandomListOfType(type_):
     randList = []
     listSize = random.randint(0, 1000)
-    for _ in range(listSize):
-        randList.append(createRandomPrimitiveValue(type_))
 
-def createRandomPrimitiveValue(type_):
+    for _ in range(listSize):
+        randList.append(createRandomBuiltinValue(type_()))
+
+    return randList
+
+def createRandomBuiltinValue(variable):
+    type_ = type(variable)
     domain1 = [0, 100]
     domain2 = [10000, 1000000]
     domain3 = [10000000, sys.maxsize]
@@ -97,12 +105,22 @@ def createRandomPrimitiveValue(type_):
         randomInt = random.randint(range[0], range[1])
 
         return getRandomStrOfLen(randomInt)
+    elif type_ == list:
+        return createRandomListOfType(variable[0])
     elif type_ == type(None):
         print('WARNING: Not sure how to generate random results for NoneType. Returning None')
         return None
 
 def createMockClassOfType(type_):
-    return Mock(spec=type_)
+    mockObject = Mock(spec=type_)
+    class_ = type_()
+
+    print("Class", class_, "AllMethods", getAllMethodNames(class_))
+    for each in getAllMethodNames(class_):
+        print(each)
+        print(getMethodReturnType(getMethod(type_, each)))
+        addMethodToMockedClass(mockObject, each, getMethodReturnType(getMethod(class_, each)))
+    return mockObject
 
 def callMockedMethod(mockedObj, methodName):
     mockedObj.__dict__[methodName]()
@@ -123,7 +141,7 @@ def getMockedObjectForType(type_):
 
         index = 0
         for each in initParameterNames:
-            randomPrimitive = createRandomPrimitiveValue(type(initParameterValues[index]))
+            randomPrimitive = createRandomBuiltinValue(initParameterValues[index])
             addAttribute(mockedClass,each, randomPrimitive)
             index += 1
 
@@ -138,7 +156,7 @@ def getParameterInputs(method):
     for argument in defaultArgs:
         argumentType = type(argument)
         if isOfPrimitiveType(argument):
-            argInputs.append(createRandomPrimitiveValue(argumentType))
+            argInputs.append(createRandomBuiltinValue(argument))
         else:
             argInputs.append(getMockedObjectForType(argumentType))
 
@@ -158,7 +176,7 @@ def callUnboundMethodWithRandomValues(class_, methodName):
     generatedParameters = getParameterInputs(unboundMethod)
     unboundMethod(*generatedParameters)
 
-def getMathodReturnType(method):
+def getMethodReturnType(method):
     methodInfo = inspect.getfullargspec(method)
     try:
         returnType = methodInfo[6]['return']

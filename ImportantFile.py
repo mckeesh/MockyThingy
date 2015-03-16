@@ -7,10 +7,11 @@ class ImportantClass:
     def __init__(self):
         pass
 
-    def doTheThing(self, number1=int(), number2=int()) -> int:
+    def doTheThing(self, number1=int(), number2=int(), classToPass=ClassToPass()) -> int:
         print("TheThing")
         print(number1, "plus", number2)
-        added = number1 + number2
+        added = classToPass.gimmeTheSum(number1, number2)
+        print(added)
         return added
 
     def doTheOtherThing(self, class1=ClassToPass()) -> int:
@@ -29,5 +30,5 @@ class ImportantClass:
         class_.int2 = 2000
         return class_
 
-    def doTheListyThing(self, listy1=[int()], listy2=[str()]):
+    def doTheListyThing(self, listy1=[int], listy2=[str]) -> int:
         return sum(listy1) + len(listy2)
