@@ -9,7 +9,7 @@ class ImportantClass:
 
     def doTheThing(self, number1=int(), number2=int()) -> int:
         print("TheThing")
-        # print(number1, "plus", number2)
+        print(number1, "plus", number2)
         added = number1 + number2
         return added
 
@@ -24,6 +24,10 @@ class ImportantClass:
         return str1+str2
 
     def returnTheThing(self, class_=ClassToPass()) -> ClassToPass:
+        print("ReturnsAClass")
         class_.int1 = 1000
         class_.int2 = 2000
         return class_
+
+    def doTheListyThing(self, listy1=[int()], listy2=[str()]):
+        return sum(listy1) + len(listy2)

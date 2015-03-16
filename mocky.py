@@ -27,7 +27,6 @@ def getMethod(class_, methodName):
     return getattr(class_, methodName)
 
 def addMethodToClass(class_, method):
-    print(getattr(method, 'func_annotations'))
     class_.__dict__[method.__name__] = method
 
 
@@ -108,13 +107,26 @@ def createMockClassOfType(type_):
 def callMockedMethod(mockedObj, methodName):
     mockedObj.__dict__[methodName]()
 
+def addAttribute(class_, propertyName, propertyValue):
+    class_.__dict__[propertyName] = propertyValue
+
+def getAttribute(class_, propertyName):
+    return class_.__dict__[propertyName]
+
 def getMockedObjectForType(type_):
-    initParameters = getParameterInputs(type_.__init__)
-    print(initParameters)
     if type_ in mockedTypes:
         return mockedTypes[type_]
     else:
+        initParameterNames = getParameterNames(type_.__init__)
+        initParameterValues = getParameterInputs(type_.__init__)
         mockedClass = createMockClassOfType(type_)
+
+        index = 0
+        for each in initParameterNames:
+            randomPrimitive = createRandomPrimitiveValue(type(initParameterValues[index]))
+            addAttribute(mockedClass,each, randomPrimitive)
+            index += 1
+
         mockedTypes[type_] = mockedClass
         return mockedClass
 
@@ -131,6 +143,14 @@ def getParameterInputs(method):
             argInputs.append(getMockedObjectForType(argumentType))
 
     return argInputs
+
+def getParameterNames(method):
+    methodInfo = inspect.getfullargspec(method)
+    parameters = methodInfo[0]
+    if 'self' in parameters:
+        return parameters[1:]
+    else:
+        return parameters
 
 def callUnboundMethodWithRandomValues(class_, methodName):
     instantiatedClass = class_()
@@ -165,7 +185,6 @@ def main():
     for methodName in getAllMethodNames(class_):
         if not methodName.startswith("__"):
             method = getMethod(class_, methodName)
-            print(getMathodReturnType(method))
             if isBoundMethod(method):
                 callUnboundMethodWithRandomValues(class_, methodName)
             else:
