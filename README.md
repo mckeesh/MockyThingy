@@ -1,0 +1,1 @@
+This project is an effort to create software to utilize mocking libraries in random testing.
