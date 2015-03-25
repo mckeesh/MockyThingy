@@ -19,7 +19,6 @@ def getClass(moduleName, className):
 def getAllMethodNames(class_):
     names = []
     for each in inspect.getmembers(class_, predicate=inspect.isfunction):
-        print(each)
         if not each[0].startswith("__"):
             names.append(each[0])
     return names
@@ -110,16 +109,16 @@ def createRandomBuiltinValue(variable):
     elif type_ == type(None):
         print('WARNING: Not sure how to generate random results for NoneType. Returning None')
         return None
+    else:
+        print("Don't know how to handle random generation for type", type_)
 
 def createMockClassOfType(type_):
     mockObject = Mock(spec=type_)
     class_ = type_()
 
-    print("Class", class_, "AllMethods", getAllMethodNames(class_))
     for each in getAllMethodNames(class_):
-        print(each)
-        print(getMethodReturnType(getMethod(type_, each)))
         addMethodToMockedClass(mockObject, each, getMethodReturnType(getMethod(class_, each)))
+
     return mockObject
 
 def callMockedMethod(mockedObj, methodName):
@@ -132,6 +131,7 @@ def getAttribute(class_, propertyName):
     return class_.__dict__[propertyName]
 
 def getMockedObjectForType(type_):
+    print("Mocking your object")
     if type_ in mockedTypes:
         return mockedTypes[type_]
     else:
@@ -144,6 +144,12 @@ def getMockedObjectForType(type_):
             randomPrimitive = createRandomBuiltinValue(initParameterValues[index])
             addAttribute(mockedClass,each, randomPrimitive)
             index += 1
+
+        realMethods = getAllMethodNames(type_)
+        for each in realMethods:
+            returnType = getMethodReturnType(getMethod(type_, each))
+            randomReturnValue = createRandomBuiltinValue(returnType())
+            addMethodToMockedClass(mockedClass, each, randomReturnValue)
 
         mockedTypes[type_] = mockedClass
         return mockedClass
