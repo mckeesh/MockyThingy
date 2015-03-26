@@ -13,9 +13,21 @@ def createRandomListOfType(type_):
     listSize = random.randint(0, 1000)
 
     for _ in range(listSize):
-        randList.append(createRandomBuiltinValue(type_()))
+        chosenType = random.choice(type_)
+        randList.append(createRandomBuiltinValue(chosenType()))
 
     return randList
+
+def createRandomDict(dictionaryOfTypes):
+    randomDict = {}
+    keyTypes = list(dictionaryOfTypes.keys())
+    for keyType in keyTypes:
+        valueTypes = dictionaryOfTypes[keyType]
+        for valueType in valueTypes:
+            randomKey = createRandomBuiltinValue(keyType())
+            randomValue = createRandomBuiltinValue(valueType())
+            randomDict[randomKey] = randomValue
+    return randomDict
 
 def createRandomBuiltinValue(variable):
     type_ = type(variable)
@@ -43,7 +55,9 @@ def createRandomBuiltinValue(variable):
 
         return getRandomStrOfLen(randomInt)
     elif type_ == list:
-        return createRandomListOfType(variable[0])
+        return createRandomListOfType(variable)
+    elif type_ == dict:
+        return createRandomDict(variable)
     elif type_ == type(None):
         print('WARNING: Not sure how to generate random results for NoneType. Returning None')
         return None

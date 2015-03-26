@@ -9,12 +9,13 @@ def getParameterInputs(method):
     defaultArgs = methodInfo[3]
     argInputs = []
 
-    for argument in defaultArgs:
-        argumentType = type(argument)
-        if _isOfPrimitiveType(argument):
-            argInputs.append(ValueGenerator.createRandomBuiltinValue(argument))
-        else:
-            argInputs.append(MockeryInteractor.getMockedObjectForType(argumentType))
+    if not (len(methodInfo[0]) == 1 and methodInfo[0][0] == 'self'):
+        for argument in defaultArgs:
+            argumentType = type(argument)
+            if _isOfPrimitiveType(argument):
+                argInputs.append(ValueGenerator.createRandomBuiltinValue(argument))
+            else:
+                argInputs.append(MockeryInteractor.getMockedObjectForType(argumentType))
 
     return argInputs
 
@@ -59,7 +60,7 @@ def isBoundMethod(method):
         return False
 
 def _isOfPrimitiveType(variable):
-    primitives = (int, str, float, bool, complex, list, type(None))
+    primitives = (int, str, float, bool, complex, list, dict, type(None))
 
     if isinstance(variable, primitives):
         return True

@@ -32,3 +32,9 @@ class ImportantClass:
 
     def doTheListyThing(self, listy1=[int], listy2=[str]) -> int:
         return sum(listy1) + len(listy2)
+
+    def doTheDictyThing(self, dict1={int:[int,str], str:[str]}) -> str:
+        bigstring = ""
+        for each in dict1.keys():
+            bigstring += str(dict1[each])
+        return bigstring
