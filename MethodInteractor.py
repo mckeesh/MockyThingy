@@ -9,15 +9,19 @@ def getParameterInputs(method):
     defaultArgs = methodInfo[3]
     argInputs = []
 
+    print("Testing", method.__name__)
+
     if not (len(methodInfo[0]) == 1 and methodInfo[0][0] == 'self'):
         for argument in defaultArgs:
-            argumentType = type(argument)
-            if _isOfPrimitiveType(argument):
-                argInputs.append(ValueGenerator.createRandomBuiltinValue(argument))
-            else:
-                argInputs.append(MockeryInteractor.getMockedObjectForType(argumentType))
+            argInputs.append(getRandomValueFor(argument))
 
     return argInputs
+
+def getRandomValueFor(argument):
+    if _isOfPrimitiveType(argument):
+        return ValueGenerator.createRandomBuiltinValue(argument)
+    else:
+        return MockeryInteractor.getMockedObjectForType(argument)
 
 def getParameterNames(method):
     methodInfo = inspect.getfullargspec(method)

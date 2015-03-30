@@ -9,14 +9,11 @@ class ImportantClass:
 
     def doTheThing(self, number1=int(), number2=int(), classToPass=ClassToPass()) -> int:
         print("TheThing")
-        print(number1, "plus", number2)
         added = classToPass.gimmeTheSum(number1, number2)
-        print(added)
         return added
 
     def doTheOtherThing(self, class1=ClassToPass()) -> int:
         print("TheOtherThing")
-        print(class1.int1, "plus", class1.int2)
         added = class1.int1 + class1.int2
         return added
 
