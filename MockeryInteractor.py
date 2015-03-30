@@ -27,8 +27,8 @@ def getMockedObjectForType(type_):
     if mockedTypesSingleton.contains(type_):
         return mockedTypesSingleton.getMockedInstanceForType(type_)
     else:
-        initParameterNames = MethodInteractor.getParameterNames(type_.__init__)
-        initParameterValues = MethodInteractor.getParameterInputs(type_.__init__)
+        # initParameterNames = MethodInteractor.getParameterNames(type_.__init__)
+        # initParameterValues = MethodInteractor.getParameterInputs(type_.__init__)
         mockedClass = createMockClassOfType(type_)
         # mockedClass.mockedClass = type_
 
